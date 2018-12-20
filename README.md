@@ -8,7 +8,7 @@ include
 
 2.RSA token validation 
 
-3.Permission token expire Authorize 
+3.Permission/token expire Authorize Middleware
 
 3.RabbitMQ ConnectionPool
 
