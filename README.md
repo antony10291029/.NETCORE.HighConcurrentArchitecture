@@ -34,7 +34,25 @@ Redis缓存实现
 
 数据同步服务
 运行
+
 cd dir
+
 dotnet restore
+
 dotnet build
+
 dotnet run
+ 
+客户端验证方法：
+
+login:var encrypt = new JSEncrypt();
+
+encrypt.setPublicKey(publickey);
+
+var login={username:"test",password:"test"};
+
+var postdata = encrypt.encrypt(JSON.stringify(login).trim());
+
+ajax方式:headers:{"Authorization": "Bearer "+token_data}
+
+api或signalR方式:requestURL?access_token=token_data
