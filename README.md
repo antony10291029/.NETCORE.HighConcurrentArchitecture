@@ -17,3 +17,5 @@ include
 5.MySQL Database ConnectionPool
 
 6.Sync Service
+
+7.SignalR Core
