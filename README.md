@@ -1,6 +1,7 @@
 # .NETCORE.HighConcurrentArchitecture
-asp.net core 2.1 
+
 Based On .NET CORE 2.1 CLI
+
 include 
 
 1.JWT AUTHROIZE 
