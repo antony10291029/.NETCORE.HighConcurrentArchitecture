@@ -12,6 +12,8 @@ include
 
 3.RabbitMQ ConnectionPool
 
-4.Redis Cache CoonectionPool
+4.Redis Cache
 
-5.Sync Service
+5.MySQL Database ConnectionPool
+
+6.Sync Service
