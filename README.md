@@ -21,9 +21,20 @@ include
 7.SignalR Core
 
 基于.NET CORE2.1
+
 主要包括JWTTOKEN的验证实现
+
 RSA加密传输
+
 权限中间件
+
 RabbitMQ队列和Mysql数据库连接池
+
 Redis缓存实现
+
 数据同步服务
+运行
+cd dir
+dotnet restore
+dotnet build
+dotnet run
