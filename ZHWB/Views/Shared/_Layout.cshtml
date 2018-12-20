@@ -59,7 +59,6 @@
         encrypt.setPublicKey(publickey);
         var test = encrypt.encrypt(JSON.stringify(login).trim());
         console.log(encodeURI(test));
-        var user={username:"lyz",password:"123",name:"罗玉钊"};
         for(var i=0;i<1;i++)
         {
                 $.ajax({ url: 'http://192.168.0.103:5000/api/auth/login',
