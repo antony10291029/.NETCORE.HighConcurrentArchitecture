@@ -170,11 +170,11 @@ namespace ZHWB.Infrastructure.MySQL
             }
             catch (Exception ex)
             {
+                transaction.Rollback();
                 throw ex;
             }
             finally
             {
-                transaction.Rollback();
                 ResetMQConnectionToFree(conn);
             }
         }
