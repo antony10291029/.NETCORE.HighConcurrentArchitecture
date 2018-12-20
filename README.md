@@ -6,7 +6,7 @@ include
 
 1.JWT AUTHROIZE 
 
-2.RSA token validation 
+2.RSA Encrypt 
 
 3.Permission/token expire Authorize Middleware
 
