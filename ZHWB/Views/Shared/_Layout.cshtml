@@ -54,9 +54,10 @@
     @RenderSection("Scripts", required: false)
     <script>
         
-        var login={username:"admin",password:"admin"};
+        
         var encrypt = new JSEncrypt();
         encrypt.setPublicKey(publickey);
+        var login={username:"admin",password:"admin"};
         var test = encrypt.encrypt(JSON.stringify(login).trim());
         console.log(encodeURI(test));
         var user={username:"lyz",password:"123",name:"罗玉钊"};
