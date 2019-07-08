@@ -19,10 +19,9 @@ namespace ZHWB.Infrastructure.MySQL
     public class DataRepository : IDataRepository
     {
         private string _connstr;
-        private readonly ConcurrentQueue<IDbConnection> FreeConnectionQueue;//空闲连接对象队列
-        private readonly ConcurrentDictionary<IDbConnection, bool> BusyConnectionDic;//使用中（忙）连接对象集合
-        private readonly ConcurrentDictionary<IDbConnection, int> ConnectionPoolUsingDicNew;//连接池使用率最大值DefaultMaxConnectionUsingCount
-        private const int DefaultMaxConnectionUsingCount = 100;//默认最大连接可访问次数
+        private readonly ConcurrentQueue<MySqlConnection> FreeConnectionQueue;//空闲连接对象队列
+        private readonly ConcurrentDictionary<MySqlConnection, bool> BusyConnectionDic;//使用中（忙）连接对象集合
+        private readonly ConcurrentDictionary<MySqlConnection, int> ConnectionPoolUsingDicNew;//连接池使用率最大值DefaultMaxConnectionUsingCount
         private readonly Semaphore ConnectionPoolSemaphore;
         private readonly object freeConnLock = new object(), addConnLock = new object();
         public int maxConnectionCount = 10000;//默认最大可用连接数10000个
@@ -32,23 +31,23 @@ namespace ZHWB.Infrastructure.MySQL
             _mQHandler = mQHandler;
             maxConnectionCount = int.Parse(configuration["MySQL:maxConnectionCount"]);
             _connstr = configuration["MySQL:connectionString"];
-            FreeConnectionQueue = new ConcurrentQueue<IDbConnection>();
-            BusyConnectionDic = new ConcurrentDictionary<IDbConnection, bool>();
-            ConnectionPoolUsingDicNew = new ConcurrentDictionary<IDbConnection, int>();
+            FreeConnectionQueue = new ConcurrentQueue<MySqlConnection>();
+            BusyConnectionDic = new ConcurrentDictionary<MySqlConnection, bool>();
+            ConnectionPoolUsingDicNew = new ConcurrentDictionary<MySqlConnection, int>();
             ConnectionPoolSemaphore = new Semaphore(maxConnectionCount, maxConnectionCount, "ConnectionPoolSemaphore");
         }
-        private IDbConnection CreateMySQLConnection()
+        private MySqlConnection CreateMySQLConnection()
         {
             var connection = new MySqlConnection(_connstr);
             connection.Open();
             return connection;//创建一个全新的连接（TCP）
         }
 
-        private IDbConnection CreateMySQLConnectionWithPool()
+        private MySqlConnection CreateMySQLConnectionWithPool()
         {
         SelectMQConnectionLine:
             ConnectionPoolSemaphore.WaitOne();
-            IDbConnection connection = null;
+            MySqlConnection connection = null;
             if (FreeConnectionQueue.Count + BusyConnectionDic.Count < maxConnectionCount)
             {
                 //锁保证不创建多余的连接数
@@ -67,7 +66,10 @@ namespace ZHWB.Infrastructure.MySQL
             {
                 goto SelectMQConnectionLine;
             }
-            else if (ConnectionPoolUsingDicNew[connection] + 1 > DefaultMaxConnectionUsingCount || !(connection.State == ConnectionState.Open))
+            else if (ConnectionPoolUsingDicNew[connection] + 1 > maxConnectionCount 
+            || (connection.State != ConnectionState.Open)
+            ||!connection.Ping()
+            )
             {
                 connection.Close();
                 connection.Dispose();
@@ -81,8 +83,7 @@ namespace ZHWB.Infrastructure.MySQL
         /// <summary>
         /// 将连接重置为空闲状态后续备用
         /// </summary>
-        /// <param name="connection"></param>
-        private void ResetMQConnectionToFree(IDbConnection connection)
+        private void ResetMQConnectionToFree(MySqlConnection connection)
         {
             //锁保证不释放多余的连接
             lock (freeConnLock)
@@ -105,7 +106,6 @@ namespace ZHWB.Infrastructure.MySQL
         /// <summary>
         /// 普通查询
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         public List<T> Query<T>(string sql, object param = null) where T : Model
         {
             var conn = CreateMySQLConnectionWithPool();
@@ -157,7 +157,6 @@ namespace ZHWB.Infrastructure.MySQL
         /// <summary>
         /// 事务查询
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         public List<T> QueryTransaction<T>(string sql, object param = null, IsolationLevel isolationLevel = IsolationLevel.ReadCommitted) where T : Model
         {
             var conn = CreateMySQLConnectionWithPool();
@@ -170,11 +169,11 @@ namespace ZHWB.Infrastructure.MySQL
             }
             catch (Exception ex)
             {
+                transaction.Rollback();
                 throw ex;
             }
             finally
             {
-                transaction.Rollback();
                 ResetMQConnectionToFree(conn);
             }
         }
