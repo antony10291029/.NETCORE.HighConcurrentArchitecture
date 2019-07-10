@@ -1,4 +1,4 @@
-using Dapper;
+﻿using Dapper;
 using MySql.Data.MySqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Text;
@@ -15,6 +15,7 @@ namespace ZHWB.Infrastructure.MySQL
 {
     /// <summary>
     /// MySQL查询连接池。这里只提供查询不提供直接写入 写入统一使用队列
+    ///一切任何数据库操作请务必在finally调用ResetMQConnectionToFree函数将连接恢复至可用状态，否则当连接池满后出现异常将造成死锁
     /// </summary>
     public class DataRepository : IDataRepository
     {
