@@ -1,5 +1,11 @@
 # .NETCORE.HighConcurrentArchitecture
 
+一个基础的.NET CORE 轻量级高并发服务端结构
+
+实际使用请根据系统业务情况合理修改
+
+联系作者:290330505@qq.com
+
 使用第三方软件
 
 https://dev.mysql.com/downloads/
