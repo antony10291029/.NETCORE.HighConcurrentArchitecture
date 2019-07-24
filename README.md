@@ -1,6 +1,7 @@
 # .NETCORE.HighConcurrentArchitecture
 
 一个基础的.NET CORE 轻量级高并发服务端结构
+上手简单易用无门槛
 
 实际使用请根据系统业务情况合理修改 日志和单元测试根据喜好自行完善
 
