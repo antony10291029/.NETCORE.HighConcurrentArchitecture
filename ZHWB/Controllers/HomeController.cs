@@ -4,20 +4,22 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using ZHWB.ViewModel;
+using ZHWB.ViewModels;
 using Microsoft.Extensions.Caching.Distributed;
-using System.Text;
+using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Authorization;
 namespace ZHWB.Controllers
 {
     public class HomeController : Controller
     {
-        public HomeController(IDistributedCache cache){
-               
+        IConfiguration Configuration;
+        public HomeController(IConfiguration configuration){
+            Configuration=configuration;
         }
         
         public IActionResult Index()
         {
+            ViewData["PubKey"]=Configuration["RSA:publicKey"];
             return View();
         }
         
@@ -28,19 +30,6 @@ namespace ZHWB.Controllers
 
             return View();
         }
-
-        public IActionResult Contact()
-        {
-            ViewData["Message"] = "Your contact page.";
-
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

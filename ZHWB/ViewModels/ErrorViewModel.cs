@@ -1,6 +1,6 @@
 using System;
 
-namespace ZHWB.ViewModel
+namespace ZHWB.ViewModels
 {
     public class ErrorViewModel
     {

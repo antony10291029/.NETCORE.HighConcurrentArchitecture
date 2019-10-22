@@ -7,7 +7,6 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Hosting.WindowsServices;
 using System.Diagnostics;
 using System.Net;
 namespace ZHWB
@@ -21,10 +20,8 @@ namespace ZHWB
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
-            var pathToExe = Process.GetCurrentProcess().MainModule.FileName;
-            var pathToContentRoot = Path.GetDirectoryName(pathToExe);
             return WebHost.CreateDefaultBuilder(args)
-             .UseKestrel().UseUrls("http://*:5000","https://*:5001")
+             .UseKestrel()
              .UseStartup<Startup>()
              .ConfigureLogging((hostingContext, logging) =>
                 {
@@ -33,14 +30,6 @@ namespace ZHWB
                     logging.AddDebug();
                     logging.AddEventSourceLogger();
                 });
-             //.UseContentRoot(pathToContentRoot);
-             /*.UseKestrel(option => {
-                 option.Listen(IPAddress.Any, 5000);
-                 option.Listen(IPAddress.Any, 5001, listenOptions =>
-                    {
-                        listenOptions.UseHttps("*.pfx", "testPassword");
-                    });
-             });*/
         }
         //https://docs.microsoft.com/zh-cn/aspnet/core/host-and-deploy/windows-service?view=aspnetcore-2.1
         //dotnet publish -f netcoreapp2.1 -c Release 控制台部署 dotnet ZHWB.dll加载执行控制台

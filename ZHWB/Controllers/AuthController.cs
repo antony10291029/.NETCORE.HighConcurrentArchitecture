@@ -1,3 +1,4 @@
+using System.IO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,26 +41,30 @@ namespace ZHWB.Controllers
             _roles=roles;
         }
         [HttpGet]
+        [Authorize]
+        public string GetAuth()
+        {
+            return "ok";
+        }
+        [HttpGet]
         public string GetKey()
         {
             return Configuration["RSA:publicKey"];
         }
+
         [HttpPost]
-        public ActionResult<string> Register([FromForm]string userinfo)
+        public ActionResult<string> Register([FromForm]User user)
         {
-            RSATool rSATool = new RSATool(RSAType.RSA, Encoding.UTF8, Configuration["RSA:privateKey"], Configuration["RSA:publicKey"]);
-            var decrypt = rSATool.Decrypt(userinfo);
-            var user = JsonConvert.DeserializeObject<User>(decrypt);
             var val = user.Validate();
             if (val == null)
             {
                 _repository.SaveUser(user);
-                return string.Empty;
+                return "ok";
             }
             else return val.error;
         }
-        [HttpGet]
-        
+        [HttpPost]
+        [Authorize]
         public void removeUser(string id)
         {
             _repository.RemoveUser(id);
@@ -67,7 +72,6 @@ namespace ZHWB.Controllers
         /// <summary>
         /// 用户token
         /// </summary>
-        /// <param name="logininfo"></param>
         /// <returns></returns>
         [HttpPost]
         public ActionResult<string> Login([FromForm]string logininfo)

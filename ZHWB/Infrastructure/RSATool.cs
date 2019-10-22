@@ -5,6 +5,9 @@ using System;
 using System.IO;
 namespace ZHWB.Infrastructure
 {
+    /// <summary>
+    /// RSA加密解密工具
+    /// </summary>
     public class RSATool
     {
         private RSA _privateKeyRsaProvider;

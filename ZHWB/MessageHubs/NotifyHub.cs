@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.AspNetCore.SignalR.Protocol;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.SignalR.Internal;
 using System.Threading.Tasks;
 using System;
 using ZHWB.Infrastructure.Cache;
@@ -37,7 +35,6 @@ namespace ZHWB.MessageHubs
         /// <summary>
         /// 丢失连接时触发
         /// </summary>
-        /// <param name="ex"></param>
         /// <returns></returns>
         [Authorize]
         public override async Task OnDisconnectedAsync(Exception ex)
@@ -50,8 +47,6 @@ namespace ZHWB.MessageHubs
         /// <summary>
         /// 通知指定用户的客户端收到
         /// </summary>
-        /// <param name="clientid"></param>
-        /// <param name="message"></param>
         /// <returns></returns>
         [Authorize]
         public async Task SendMessageToClient(string userid, string message)
@@ -65,7 +60,6 @@ namespace ZHWB.MessageHubs
         /// <summary>
         /// 公共消息所有人可以收到
         /// </summary>
-        /// <param name="message"></param>
         /// <returns></returns>
         [Authorize]
         public async void SendPublicMessage(string message)
@@ -75,8 +69,6 @@ namespace ZHWB.MessageHubs
         /// <summary>
         /// 给多名用户推送消息
         /// </summary>
-        /// <param name="userids"></param>
-        /// <param name="message"></param>
         /// <returns></returns>
         [Authorize]
         public async void SendMessageToClients(string[] userids, string message)

@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using Microsoft.Extensions.FileProviders;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,7 +23,7 @@ using ZHWB.Infrastructure.MySQL;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using ZHWB.MessageHubs;
 using ZHWB.Middleware;
 using System.Security.Claims;
@@ -38,30 +38,21 @@ namespace ZHWB
             Configuration = configuration;
             _logger = logger;
         }
-
         public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<CookiePolicyOptions>(options =>
             {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-
             //容器注册
-            
             services.AddTransient<IUserRoleRepository, UserRoleRepository>();
             services.AddTransient<IRoleRepository, RoleRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
-
-
             services.AddTransient<IDataCaches<User>, DataCaches<User>>();
             services.AddTransient<IDataCaches<Role>, DataCaches<Role>>();
             services.AddTransient<IDataCaches<UserRole>, DataCaches<UserRole>>();
- 
             services.AddTransient<IExceptionLogger, ExceptionLogger>();
             services.AddSingleton<IRabitMQHandler, RabitMQHandler>();//MQ独立实例内部维护连接池
             services.AddSingleton<IDataRepository, DataRepository>();//MySQL独立实例内部维护连接池
@@ -128,7 +119,7 @@ namespace ZHWB
                 };
             });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc();
             services.AddSignalR();
             //跨域支持
             services.AddCors(options =>
@@ -141,49 +132,55 @@ namespace ZHWB
                     builder.AllowAnyHeader();
                 });
             });
-            //services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
         }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env,
-        ILoggerFactory loggerFactory, IDistributedCache cache, IApplicationLifetime lifetime)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory, IDistributedCache cache)
         {
-            if (env.IsDevelopment())
+            if (env.EnvironmentName == "Development")
             {
                 app.UseDeveloperExceptionPage();
             }
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                //app.UseHsts();//HTTPS
+                app.UseHsts();//HTTPS
             }
             //app.UseHttpsRedirection();
             app.UseStatusCodePages();
-            app.UseStaticFiles();
-            app.UseAuthentication();
+            app.UseFileServer(new FileServerOptions()
+            {
+                //在访问路径时列出内容
+                FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, @"wwwroot/downloads")),//实际目录地址
+                RequestPath = new Microsoft.AspNetCore.Http.PathString("/download"),  //用户访问地址
+                EnableDirectoryBrowsing = true,                                    //开启目录浏览
+            });
+            var provider = new FileExtensionContentTypeProvider();
+            // Add new mappings
+            provider.Mappings[".zip"] = "application/x-msdownload";
+            provider.Mappings[".image"] = "image/png";
+            // Replace an existing mapping
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                ContentTypeProvider = provider
+            });
+            app.UseAuthorization();
+            //app.UseAuthentication();
             app.UseCookiePolicy();
             //增加对负载均衡代理支持
             app.UseForwardedHeaders(new ForwardedHeadersOptions { ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto });
-            lifetime.ApplicationStarted.Register(() =>
-            {
-                //IRabitMQHandler  mQHandler= app.ApplicationServices.GetService(typeof(IRabitMQHandler)) as IRabitMQHandler;
-            });
-            //signalR支持
-            app.UseSignalR(routes =>
-            {
-                routes.MapHub<NotifyHub>("/notifyHub");
-            });
             //添加权限中间件
             app.UsePermission();
-
-            //USEMVC必须在最后执行
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-            });
             app.UseCors("AllowAll");
-
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute(
+                    name:"default",
+                    pattern:"{controller=Home}/{action=Index}/{id?}"
+                );
+                endpoints.MapRazorPages();
+                endpoints.MapHub<NotifyHub>("/notifyHub");
+            });
         }
     }
 }
