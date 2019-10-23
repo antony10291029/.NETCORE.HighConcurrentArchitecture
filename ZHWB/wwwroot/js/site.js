@@ -6,7 +6,6 @@
 $(function(){
     getPubkey();
     register("guest","guest");
-    
     remove("testid","notoken");
     testPolicy("notoken");
     function getPubkey(){
@@ -85,10 +84,12 @@ $(function(){
                 $("#loginTest").append("<br/>token:"+data);
                 remove("testid",data);
                 testPolicy(data);
+                $("#pageTest").append("<a target='_blank' href='home/about?access_token="+data+"'>authPageOK</a><br/><a target='_blank' href='home/about?access_token=nodata'>authPageFAIL</a>");
             },
             error:function(err){
                 $("#loginTest").addClass("text-danger");
                 $("#loginTest").append("<br/>"+err.statusText);
+                
             }
         });
     }

@@ -23,7 +23,7 @@ namespace ZHWB.Controllers
             return View();
         }
         
-        [Authorize("api")]
+        [Authorize("test")]
         public IActionResult About()
         {
             ViewData["Message"] = "Your application description page.This Page Need Authorize";
