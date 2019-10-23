@@ -13,7 +13,5 @@ namespace ZHWB.ViewModels
         public string username { get; set; }
         public string phone { get; set; }
         public string name { get; set; }
-        public string token{get;set;}
-        public string userData{get;set;}
     }
 }

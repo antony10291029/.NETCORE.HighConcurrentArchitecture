@@ -1,3 +1,4 @@
+using System.Net;
 using System.IO;
 using System;
 using System.Collections.Generic;
@@ -26,19 +27,20 @@ namespace ZHWB.Controllers
     [Route("api/[controller]/[action]")]
     [ApiController]
     [EnableCors("AllowAll")]
+    
     public class AuthController : ControllerBase
     {
         IUserRepository _repository;
         IUserRoleRepository _userroles;
         IConfiguration Configuration;
         IRoleRepository _roles;
-        public AuthController(IUserRepository repository, 
-         IConfiguration configuration,IUserRoleRepository userroles,IRoleRepository roles)
+        public AuthController(IUserRepository repository,
+         IConfiguration configuration, IUserRoleRepository userroles, IRoleRepository roles)
         {
             Configuration = configuration;
             _repository = repository;
-            _userroles=userroles;
-            _roles=roles;
+            _userroles = userroles;
+            _roles = roles;
         }
         [HttpGet]
         [Authorize]
@@ -65,9 +67,15 @@ namespace ZHWB.Controllers
         }
         [HttpPost]
         [Authorize]
-        public void removeUser(string id)
+        public void removeUser([FromForm]string id)
         {
-            _repository.RemoveUser(id);
+             _repository.RemoveUser(id);
+        }
+        [HttpPost]
+        [Authorize("test")]
+        public string testPolicy()
+        {
+            return "ok";
         }
         /// <summary>
         /// 用户token
@@ -86,18 +94,16 @@ namespace ZHWB.Controllers
                 var expiredays = int.Parse(Configuration["JWTAuth:expires"]);
                 var expire = DateTime.Now.AddDays(expiredays);
                 var info = new UserInfoViewModel();
-                var userdata = Guid.NewGuid().ToString();
-                var roleids = _userroles.GetListByUserId(user.Id).Select(s=>s.roleid).ToArray();
-                var roles=_roles.GetRoles(roleids);
+                var roleids = _userroles.GetListByUserId(user.Id).Select(s => s.roleid).ToArray();
+                var roles = _roles.GetRoles(roleids);
                 info.Roles = roles;
-                info.userData = userdata;//TOKEN标识
                 info.name = user.name;
                 info.phone = user.phone;
                 info.userid = user.Id;
                 info.username = user.name;
                 var claims = new[]{
-                    new Claim(ClaimTypes.Name,info.userid),//保证名称唯一
-                    new Claim(ClaimTypes.UserData,userdata)//TOKEN标识
+                    new Claim(ClaimTypes.Name,info.username),//用户名不重复
+                    new Claim(ClaimTypes.UserData,JsonConvert.SerializeObject(info)) 
                 };
                 //sign the token using a secret key.This secret will be shared between your API and anything that needs to check that the token is legit.
                 var secretKey = Configuration["JWTAuth:secretKey"];
@@ -110,10 +116,8 @@ namespace ZHWB.Controllers
                     expires: expire.ToUniversalTime(),
                     signingCredentials: creds
                 );
-                info.token = new JwtSecurityTokenHandler().WriteToken(token);
-                //缓存用户信息
-                _repository.SetUserTokenInfo(user.Id, JsonConvert.SerializeObject(info));
-                return info.token;
+                var res = new JwtSecurityTokenHandler().WriteToken(token);
+                return res;
             }
             return null;
         }

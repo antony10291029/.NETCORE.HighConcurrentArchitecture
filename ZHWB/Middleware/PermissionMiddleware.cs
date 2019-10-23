@@ -36,9 +36,9 @@ namespace ZHWB.Middleware
         /// </summary>
         /// <param name="context">请求上下文</param>
         /// <returns></returns>
-        public Task Invoke(HttpContext context,IUserRepository userRep)
+        public Task Invoke(HttpContext context, IUserRepository userRep)
         {
-            _userRep=userRep;
+            _userRep = userRep;
             //请求Url
             var questUrl = context.Request.Path.Value.ToLower();
             //是否经过验证
@@ -46,29 +46,19 @@ namespace ZHWB.Middleware
             ///已经通过登录验证的API
             if (isAuthenticated)
             {
-                //再次验证是否最新token不是拦截旧TOKEN强制过期
-                var userdata=context.User.Claims.ToList()[1].Value;//当前使用TOKEN的唯一标识
-                var userId=context.User.Identity.Name;
-                var user=_userRep.GetUserTokenInfo(userId);//用户最新登录信息
-                if(user!=null){
-                    var entity=JsonConvert.DeserializeObject<UserInfoViewModel>(user);
-                    if(entity.userData!=userdata){//标识匹配不是最新的TOKEN
-                        context.Response.StatusCode=401;
-                    }
-                    else{
-                        //验证权限
-                        if(!CheckPermissions(entity.Roles,questUrl)){
-                            context.Response.StatusCode=401;
-                        }
-                    }
+                string json = context.User.Claims.Where(s => s.Type == ClaimTypes.UserData).First().Value;
+                var user = JsonConvert.DeserializeObject<UserInfoViewModel>(json);
+                if (user.Roles.Select(s => s.privates).Contains("*"))//验证是否有权限
+                {
+                    return this._next(context);
                 }
                 else{
-                    context.Response.StatusCode=401;
+                   context.Response.StatusCode=401;
                 }
             }
             return this._next(context);
         }
-        private Boolean CheckPermissions(List<Role> roles,string url)
+        private Boolean CheckPermissions(List<Role> roles, string url)
         {
             //这里验证权限
             return true;

@@ -1,16 +1,18 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-PublicKey is:
-<p id="pubkey">@ViewData["PubKey"].ToString()</p>
+<div class="container text-justify" >
+
+<p id="pubkey">pubkey:@ViewData["PubKey"]</p>
 <p id="getTest">ApiGet:</p>
 <p id="postTest">ApiPost:</p>
 <p id="loginTest">ApiLogin:</p>
 <p id="apiAuthTestOK">ApiAuthorizeGetOK:</p>
 <p id="apiAuthTestFAIL">ApiAuthorizeGetFAIL:</p>
 
-<p id="pageAuthTestOK">PageAuthOK:</p>
-<p id="pageAuthTestOK">PageAuthFAIL:</p>
+<p id="testPolicyOK">testPolicyOK:</p>
+<p id="testPolicyFAIL">testPolicyFAIL:</p>
 <p id="signalRTest">SignalR:</p>
-
+    
+</div>
 

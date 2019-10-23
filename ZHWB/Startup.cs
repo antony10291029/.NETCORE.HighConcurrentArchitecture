@@ -17,7 +17,8 @@ using ZHWB.Infrastructure.Log;
 using ZHWB.Infrastructure.Cache;
 using ZHWB.Infrastructure.MessageQueue;
 using CSRedis;
-using ZHWB.Infrastructure;
+using ZHWB.AuthorizationPolicies;
+using Microsoft.AspNetCore.Authorization;
 using ZHWB.Domain.Models;
 using ZHWB.Infrastructure.MySQL;
 using System.Text;
@@ -26,6 +27,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IO;
 using ZHWB.MessageHubs;
 using ZHWB.Middleware;
+using Microsoft.Extensions.Hosting;
 using System.Security.Claims;
 
 namespace ZHWB
@@ -75,10 +77,10 @@ namespace ZHWB
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-
             }).AddJwtBearer(options =>
             {
                 // Configure JWT Bearer Auth to expect our security key
+                //options.Authority="";
                 options.TokenValidationParameters =
                    new TokenValidationParameters
                    {
@@ -118,7 +120,10 @@ namespace ZHWB
                     }
                 };
             });
-
+            services.AddAuthorization(options =>
+            {
+                options.AddtestPolicy(services.BuildServiceProvider().GetService<IUserRepository>());
+            });            
             services.AddMvc();
             services.AddSignalR();
             //跨域支持
@@ -150,9 +155,9 @@ namespace ZHWB
             app.UseFileServer(new FileServerOptions()
             {
                 //在访问路径时列出内容
-                FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, @"wwwroot/downloads")),//实际目录地址
-                RequestPath = new Microsoft.AspNetCore.Http.PathString("/download"),  //用户访问地址
-                EnableDirectoryBrowsing = true,                                    //开启目录浏览
+                FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, @"wwwroot/publicfiles")),//实际目录地址
+                RequestPath = new Microsoft.AspNetCore.Http.PathString("/publicfiles"),  //用户访问地址
+                EnableDirectoryBrowsing = true,//开启目录浏览
             });
             var provider = new FileExtensionContentTypeProvider();
             // Add new mappings
@@ -163,21 +168,18 @@ namespace ZHWB
             {
                 ContentTypeProvider = provider
             });
-            app.UseAuthorization();
-            //app.UseAuthentication();
-            app.UseCookiePolicy();
-            //增加对负载均衡代理支持
+
             app.UseForwardedHeaders(new ForwardedHeadersOptions { ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto });
             //添加权限中间件
             app.UsePermission();
             app.UseCors("AllowAll");
             app.UseRouting();
+            //先应用路由再应用认证和授权
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name:"default",
-                    pattern:"{controller=Home}/{action=Index}/{id?}"
-                );
+                endpoints.MapDefaultControllerRoute();
                 endpoints.MapRazorPages();
                 endpoints.MapHub<NotifyHub>("/notifyHub");
             });

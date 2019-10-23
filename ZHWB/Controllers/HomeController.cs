@@ -23,11 +23,10 @@ namespace ZHWB.Controllers
             return View();
         }
         
-        [Authorize]
+        [Authorize("api")]
         public IActionResult About()
         {
-            ViewData["Message"] = "Your application description page.";
-
+            ViewData["Message"] = "Your application description page.This Page Need Authorize";
             return View();
         }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
