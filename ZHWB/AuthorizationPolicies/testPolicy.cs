@@ -21,7 +21,10 @@ namespace ZHWB.AuthorizationPolicies
                         {
                             if (context.User.Identity.IsAuthenticated)
                             {
-                                return true;
+                                string json = context.User.Claims.Where(s => s.Type == ClaimTypes.UserData).First().Value;
+                                var user = JsonConvert.DeserializeObject<UserInfoViewModel>(json);
+                                if (user.Roles.Select(s => s.privates).Contains("*"))//验证是否有权限
+                                    return true;
                             }
                             return false;
                         });

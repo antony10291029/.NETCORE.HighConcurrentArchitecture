@@ -12,9 +12,9 @@ $(function () {
         var connection = new signalR.HubConnectionBuilder().withUrl("/notifyHub?access_token="+token).build();
         document.getElementById("sendButton").disabled = true;
         connection.on("publicMessageReceived", function (message) {
-            var msg = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            var msg =new Date()+"<p class='text-success'>"+ message+"</p>";
             var li = document.createElement("li");
-            li.textContent = msg;
+            li.innerHTML = msg;
             document.getElementById("messagesList").appendChild(li);
         });
         connection.on("onConnected", function (uid,cid) {

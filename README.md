@@ -19,29 +19,31 @@ https://github.com/StackExchange/Dapper
 https://github.com/travist/jsencrypt
 
 20191023
+
 --更新至.NET CORE3.0 
-新增自定义授权策略
-新增数据库创建脚本
 
-主要包括JWTTOKEN的验证实现
+新增自定义授权策略实现权限控制弃用自定义的权限中间件
 
-RSA加密传输
+新增数据库创建脚本 Redis和MQ连接池的实现
 
-权限中间件
+修复3.0版本下的身份认证和策略授权变化
 
-RabbitMQ队列和Mysql数据库连接池
+mySQL数据库存储规则:
 
-连接池不会每次请求都创建数据库或MQ连接，最多只会创建指定数量的连接，当连接不可用或丢失，将会重新创建连接，并在调用以后重置为可用状态，进入空闲队列以供其它请求使用,并不会释放。
+    表名称和字段与模型类一一对应(名称一致表名类名一致)
+    
+redis缓存数据存储规则：
 
-采用Dapper访问Mysql
+    常规缓存String:Key-Value(JSON)
 
-采用Redis作为读取缓存
+    单条数据HASH：KEY(表名:键值)-VALUE(HASH)
 
-采用RabbitMQ和独立后台进行MySQL写入
-
-Redis缓存实现 RedisCore内部自带连接池
+    一对多关系映射Set:KEY(主表1名称_表2名称:表1键值)-VALUE(表2键值[]) 
+    
+    主表字段标记属性[ForeignKeyAttribute("从表名称")]
 
 数据同步服务
+
 运行
 
 cd dir
@@ -51,5 +53,7 @@ dotnet restore  //获取依赖
 dotnet build    //编译  
 
 dotnet run      //运行
+
+![image](https://https://github.com/luoyuzhao/.NETCORE.HighConcurrentArchitecture/blob/master/Screenshot.jpg?raw=true)
  
 

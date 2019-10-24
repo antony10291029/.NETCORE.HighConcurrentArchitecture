@@ -69,6 +69,7 @@ namespace ZHWB.Controllers
         [Authorize]
         public void removeUser([FromForm]string id)
         {
+            var isAuthenticated = HttpContext.User.Identity.IsAuthenticated;
              _repository.RemoveUser(id);
         }
         [HttpPost]

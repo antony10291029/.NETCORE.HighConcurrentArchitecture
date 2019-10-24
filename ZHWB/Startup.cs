@@ -26,7 +26,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.IO;
 using ZHWB.MessageHubs;
-using ZHWB.Middleware;
 using Microsoft.Extensions.Hosting;
 using System.Security.Claims;
 
@@ -170,8 +169,8 @@ namespace ZHWB
             });
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions { ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto });
-            //添加权限中间件
-            app.UsePermission();
+
+            
             app.UseCors("AllowAll");
             app.UseRouting();
             //先应用路由再应用认证和授权
