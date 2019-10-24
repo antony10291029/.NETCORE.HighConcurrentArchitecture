@@ -27,7 +27,7 @@ namespace ZHWB.Controllers
     [Route("api/[controller]/[action]")]
     [ApiController]
     [EnableCors("AllowAll")]
-    
+
     public class AuthController : ControllerBase
     {
         IUserRepository _repository;
@@ -70,13 +70,24 @@ namespace ZHWB.Controllers
         public void removeUser([FromForm]string id)
         {
             var isAuthenticated = HttpContext.User.Identity.IsAuthenticated;
-             _repository.RemoveUser(id);
+            _repository.RemoveUser(id);
         }
         [HttpPost]
         [Authorize("test")]
         public string testPolicy()
         {
             return "ok";
+        }
+        [HttpGet]
+        public User testGet()
+        {
+            var user = _repository.GetUser("admin");
+            return user;
+        }
+        [HttpPost]
+        public User testPost()
+        {
+            return _repository.GetUser("admin");
         }
         /// <summary>
         /// 用户token
@@ -104,7 +115,7 @@ namespace ZHWB.Controllers
                 info.username = user.name;
                 var claims = new[]{
                     new Claim(ClaimTypes.Name,info.username),//用户名不重复
-                    new Claim(ClaimTypes.UserData,JsonConvert.SerializeObject(info)) 
+                    new Claim(ClaimTypes.UserData,JsonConvert.SerializeObject(info))
                 };
                 //sign the token using a secret key.This secret will be shared between your API and anything that needs to check that the token is legit.
                 var secretKey = Configuration["JWTAuth:secretKey"];

@@ -30,9 +30,9 @@ namespace ZHWB.Domain.Repositories
         public User GetUser(string id)
         {
             var res = _cachce.GetData(id);
-            if (res == null)
+            if (res == null||string.IsNullOrEmpty(res.Id))
             {
-                res = _data.Query<User>("SELECT * FROM zhwb.user  where id = @id limit 1", id).FirstOrDefault();
+                res = _data.Query<User>("SELECT * FROM zhwb.user  where id = @id limit 1", new {id=id}).FirstOrDefault();
                 if (res != null)
                 {
                     _cachce.SetData(res);

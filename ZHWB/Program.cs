@@ -32,6 +32,6 @@ namespace ZHWB
                 });
         }
         //https://docs.microsoft.com/zh-cn/aspnet/core/host-and-deploy/windows-service?view=aspnetcore-2.1
-        //dotnet publish -f netcoreapp2.1 -c Release 控制台部署 dotnet ZHWB.dll加载执行控制台
+        //dotnet publish -c release -o publish 控制台部署 dotnet ZHWB.dll加载执行控制台
     }
 }

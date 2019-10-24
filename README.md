@@ -18,6 +18,8 @@ https://github.com/StackExchange/Dapper
 
 https://github.com/travist/jsencrypt
 
+测试工具：http://jmeter.apache.org/download_jmeter.cgi
+
 20191023
 
 --更新至.NET CORE3.0 
@@ -56,4 +58,6 @@ dotnet run      //运行
 
 ![image](https://github.com/luoyuzhao/.NETCORE.HighConcurrentArchitecture/blob/master/Screenshot.jpg?raw=true)
  
+
+
 
