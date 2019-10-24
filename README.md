@@ -18,7 +18,7 @@ https://github.com/StackExchange/Dapper
 
 https://github.com/travist/jsencrypt
 
-测试工具：http://jmeter.apache.org/download_jmeter.cgi
+
 
 20191023
 
@@ -46,6 +46,8 @@ redis缓存数据存储规则：
 
 数据同步服务
 
+
+
 运行
 
 cd dir
@@ -56,8 +58,20 @@ dotnet build    //编译
 
 dotnet run      //运行
 
+测试工具：http://jmeter.apache.org/download_jmeter.cgi
+
+配置连接数:1000
+
+release部署环境:虚拟机 winServer2008R2X64 intel 4.0GHZ 2CPUcore RAM 2G Kestrel
+
+测试结果:
+
+![image](https://github.com/luoyuzhao/.NETCORE.HighConcurrentArchitecture/blob/master/test.jpg?raw=true)
+
+
 ![image](https://github.com/luoyuzhao/.NETCORE.HighConcurrentArchitecture/blob/master/Screenshot.jpg?raw=true)
  
+
 
 
 

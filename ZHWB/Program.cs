@@ -21,7 +21,10 @@ namespace ZHWB
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
             return WebHost.CreateDefaultBuilder(args)
-             .UseKestrel()
+             .UseKestrel(options=>{
+                 options.ListenAnyIP(5000);
+                 options.ListenAnyIP(5001);
+             })
              .UseStartup<Startup>()
              .ConfigureLogging((hostingContext, logging) =>
                 {
