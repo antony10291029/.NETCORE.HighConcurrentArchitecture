@@ -54,6 +54,6 @@ dotnet build    //编译
 
 dotnet run      //运行
 
-![image](https://https://github.com/luoyuzhao/.NETCORE.HighConcurrentArchitecture/blob/master/Screenshot.jpg?raw=true)
+![image](https://github.com/luoyuzhao/.NETCORE.HighConcurrentArchitecture/blob/master/Screenshot.jpg?raw=true)
  
 
