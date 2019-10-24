@@ -30,7 +30,7 @@ namespace ZHWB.MessageHubs
             var connid = Context.ConnectionId;
             var userid = Context.User.Claims.ToList()[0].Value;
             _cache.SetValue(prefix + userid, connid);
-            await Clients.Client(connid).SendAsync("onConnected");
+            await Clients.Client(connid).SendAsync("onConnected",userid,connid);
         }
         /// <summary>
         /// 丢失连接时触发

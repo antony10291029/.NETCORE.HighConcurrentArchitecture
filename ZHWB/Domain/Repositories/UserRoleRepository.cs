@@ -23,10 +23,10 @@ namespace ZHWB.Domain.Repositories
         public List<UserRole> GetListByUserId(string userid)
         {
             var ids = _cachce.GetList(userid,"User");
-            if (ids != null)
+            if (ids != null&&ids.Length>0)
             {
                 var userroles=_cachce.GetList(ids);
-                if(userroles!=null){
+                if(userroles!=null&&userroles.Count>0){
                     return userroles;
                 }
             }
@@ -66,10 +66,10 @@ namespace ZHWB.Domain.Repositories
         public List<UserRole> GetUsersByRoleid(string roleid)
         {
             var ids = _cachce.GetList(roleid,"Role");
-            if(ids!=null)
+            if(ids!=null&&ids.Length>0)
             {
                 var datas=_cachce.GetList(ids);
-                if(datas!=null)
+                if(datas!=null&&datas.Count>0)
                 {
                     return datas;
                 }

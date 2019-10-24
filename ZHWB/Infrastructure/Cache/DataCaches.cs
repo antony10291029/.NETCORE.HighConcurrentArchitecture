@@ -126,7 +126,10 @@ namespace ZHWB.Infrastructure.Cache
                 foreach (var l in pipe.EndPipe())
                 {
                     var r = ConvertHash2Model(l as string[]);
-                    res.Add(r);
+                    if (!string.IsNullOrEmpty(r.Id))//键值不能为空
+                    {
+                        res.Add(r);
+                    }
                 }
             }
             return res;

@@ -49,11 +49,12 @@ namespace ZHWB.Domain.Repositories
         public List<Role> GetRoles(string[] ids)
         {
             var datas=_cachce.GetList(ids);
-            if(datas!=null){
+            if(datas!=null&&datas.Count>0){
                 return datas;
             }
             else{
-                return GetAll().Where(s=>ids.Contains(s.Id)).ToList();
+                var res=_data.Query<Role>("SELECT * FROM zhwb.role where id in @ids",new{ids=ids}).ToList();
+                return res;
             }
         }
         /// <summary>
@@ -63,13 +64,13 @@ namespace ZHWB.Domain.Repositories
         public List<Role> GetAll()
         {
             var res = _cachce.GetList();
-            if (res == null)
+            if (res == null||res.Count==0)
             {
                 var roles= _data.Query<Role>("SELECT * FROM zhwb.role").ToList();
                 _cachce.SetList(roles);
                 return roles;
             }
-            return null;
+            return res;
         }
     }
 }
