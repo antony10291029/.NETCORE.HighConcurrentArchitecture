@@ -29,13 +29,12 @@ https://github.com/travist/jsencrypt
 
 修复linux下部署的一些兼容性问题
 
-新增自定义授权策略实现权限控制弃用自定义的权限中间件
-
-新增数据库创建脚本 
+修复3.0版本下的身份认证和策略授权变化
 
 实现rabbitMQ连接池
 
-修复3.0版本下的身份认证和策略授权变化
+
+![image](https://github.com/luoyuzhao/.NETCORE.HighConcurrentArchitecture/blob/master/server.jpg?raw=true)
 
 mySQL数据库存储规则:
 

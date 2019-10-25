@@ -34,7 +34,7 @@ namespace ZHWB.Infrastructure.MySQL
         /// <summary>
         /// 将连接重置为空闲状态后续备用
         /// </summary>
-        private void ResetMQConnectionToFree(MySqlConnection connection)
+        private void ConnectionToFree(MySqlConnection connection)
         {
             connection.Close();
             connection.Dispose();
@@ -56,7 +56,7 @@ namespace ZHWB.Infrastructure.MySQL
             }
             finally
             {
-                ResetMQConnectionToFree(conn);
+                ConnectionToFree(conn);
             }
         }
         public T QuerySingle<T>(string sql, object param = null) where T : Model
@@ -72,7 +72,7 @@ namespace ZHWB.Infrastructure.MySQL
             }
             finally
             {
-                ResetMQConnectionToFree(conn);
+                ConnectionToFree(conn);
             }
         }
         public T QueryFirst<T>(string sql, object param = null) where T : Model
@@ -88,7 +88,7 @@ namespace ZHWB.Infrastructure.MySQL
             }
             finally
             {
-                ResetMQConnectionToFree(conn);
+                ConnectionToFree(conn);
             }
         }
         /// <summary>
@@ -111,7 +111,7 @@ namespace ZHWB.Infrastructure.MySQL
             }
             finally
             {
-                ResetMQConnectionToFree(conn);
+                ConnectionToFree(conn);
             }
         }
         public void SetData<T>(T data) where T : Model
