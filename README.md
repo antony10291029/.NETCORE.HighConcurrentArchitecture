@@ -51,22 +51,10 @@ redis缓存数据存储规则：
     
     主表字段标记属性[ForeignKeyAttribute("从表名称")]
 
-数据同步服务
-
-运行
-
-cd dir
-
-dotnet restore  //获取依赖
-
-dotnet build    //编译  
-
-dotnet run      //运行
-
-
-
 win 发布:dotnet publish -c release -o publish
+
 linux 发布:dotnet publish -c release -o publish --runtime linux-x64
+
 具体请参照官方文档:https://docs.microsoft.com/zh-cn/dotnet/core
 
 测试工具：http://jmeter.apache.org/download_jmeter.cgi
