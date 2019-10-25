@@ -5,15 +5,18 @@
 
 实际使用请根据系统业务情况合理修改 日志和单元测试根据喜好自行完善
 
-联系作者:290330505@qq.com
+沟通交流:290330505@qq.com
 
 使用第三方软件
 
 https://dev.mysql.com/downloads/
+
 https://www.rabbitmq.com/
+
 https://redis.io/
 
 https://github.com/2881099/csredis
+
 https://github.com/StackExchange/Dapper
 
 https://github.com/travist/jsencrypt
@@ -60,11 +63,15 @@ dotnet build    //编译
 
 dotnet run      //运行
 
+
+
+win 发布:dotnet publish -c release -o publish
+linux 发布:dotnet publish -c release -o publish --runtime linux-x64
+具体请参照官方文档:https://docs.microsoft.com/zh-cn/dotnet/core
+
 测试工具：http://jmeter.apache.org/download_jmeter.cgi
 
 配置连接数:1000
-
-
 
 win api/auth/testGet测试结果:release部署环境:虚拟机 winServer2008R2X64 intel 4.0GHZ 2CPUs RAM 4G Kestrel
 
