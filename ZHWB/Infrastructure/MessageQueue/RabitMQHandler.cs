@@ -1,3 +1,4 @@
+using System.Buffers;
 
 using RabbitMQ.Client;
 using RabbitMQ.Util;
@@ -20,10 +21,10 @@ namespace ZHWB.Infrastructure.MessageQueue
         private readonly ConcurrentQueue<IConnection> FreeConnectionQueue;//空闲连接对象队列
         private readonly ConcurrentDictionary<IConnection, bool> BusyConnectionDic;//使用中（忙）连接对象集合
         private readonly ConcurrentDictionary<IConnection, int> MQConnectionPoolUsingDicNew;//连接池使用率最大值DefaultMaxConnectionUsingCount
-        private const int DefaultMaxConnectionUsingCount = 10000;//默认最大连接可访问次数
-        private readonly Semaphore MQConnectionPoolSemaphore;
-        private readonly object freeConnLock = new object(), addConnLock = new object();
-        public int maxConnectionCount = 10000;//默认最大保持可用连接数10000个
+        private const int DefaultMaxConnectionUsingCount = 1000;//默认最大连接可访问次数
+        private readonly object freeConnLock = new object();
+        private readonly object  addConnLock = new object();
+        public int maxConnectionCount = 1000;//默认最大保持可用连接数10000个
         
         public RabitMQHandler(IConfiguration configuration)
         {
@@ -36,7 +37,6 @@ namespace ZHWB.Infrastructure.MessageQueue
             FreeConnectionQueue = new ConcurrentQueue<IConnection>();
             BusyConnectionDic = new ConcurrentDictionary<IConnection, bool>();
             MQConnectionPoolUsingDicNew = new ConcurrentDictionary<IConnection, int>();
-            MQConnectionPoolSemaphore = new Semaphore(maxConnectionCount, maxConnectionCount, "MQConnectionPoolSemaphore");
         }
         private IConnection CreateMQConnection()
         {
@@ -49,7 +49,6 @@ namespace ZHWB.Infrastructure.MessageQueue
         private IConnection CreateMQConnectionWithPool()
         {
         SelectMQConnectionLine:
-            MQConnectionPoolSemaphore.WaitOne();
             IConnection mqConnection = null;
             if (FreeConnectionQueue.Count + BusyConnectionDic.Count < maxConnectionCount)
             {
@@ -96,7 +95,6 @@ namespace ZHWB.Infrastructure.MessageQueue
                 {
                     FreeConnectionQueue.Enqueue(connection);
                 }
-                MQConnectionPoolSemaphore.Release();
             }
         }
         public int GetMessageCount(IConnection connection, string QueueName)

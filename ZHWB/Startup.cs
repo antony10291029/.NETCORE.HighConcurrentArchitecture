@@ -38,6 +38,7 @@ namespace ZHWB
         {
             Configuration = configuration;
             _logger = logger;
+            
         }
         public IConfiguration Configuration { get; }
         public void ConfigureServices(IServiceCollection services)
@@ -55,8 +56,8 @@ namespace ZHWB
             services.AddTransient<IDataCaches<Role>, DataCaches<Role>>();
             services.AddTransient<IDataCaches<UserRole>, DataCaches<UserRole>>();
             services.AddTransient<IExceptionLogger, ExceptionLogger>();
+            services.AddTransient<IDataRepository, DataRepository>();//MySQL
             services.AddSingleton<IRabitMQHandler, RabitMQHandler>();//MQ独立实例内部维护连接池
-            services.AddSingleton<IDataRepository, DataRepository>();//MySQL独立实例内部维护连接池
             //redis分布式缓存支持
             var csredis = new CSRedis.CSRedisClient(Configuration["Redis:Configuration"]);
             RedisHelper.Initialization(csredis);

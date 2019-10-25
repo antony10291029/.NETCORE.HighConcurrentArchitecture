@@ -24,9 +24,13 @@ https://github.com/travist/jsencrypt
 
 --更新至.NET CORE3.0 
 
+修复linux下部署的一些兼容性问题
+
 新增自定义授权策略实现权限控制弃用自定义的权限中间件
 
-新增数据库创建脚本 Redis和MQ连接池的实现
+新增数据库创建脚本 
+
+实现rabbitMQ连接池
 
 修复3.0版本下的身份认证和策略授权变化
 
@@ -46,8 +50,6 @@ redis缓存数据存储规则：
 
 数据同步服务
 
-
-
 运行
 
 cd dir
@@ -62,12 +64,15 @@ dotnet run      //运行
 
 配置连接数:1000
 
-release部署环境:虚拟机 winServer2008R2X64 intel 4.0GHZ 2CPUcore RAM 2G Kestrel
 
-测试结果:
+
+win api/auth/testGet测试结果:release部署环境:虚拟机 winServer2008R2X64 intel 4.0GHZ 2CPUs RAM 4G Kestrel
 
 ![image](https://github.com/luoyuzhao/.NETCORE.HighConcurrentArchitecture/blob/master/test.jpg?raw=true)
 
+linux api/auth/testGet测试结果:release部署环境:虚拟机 Ubuntu Kylin 16.04LTS intel 4.0GHZ 2CPUs RAM 4G Kestrel
+
+![image](https://github.com/luoyuzhao/.NETCORE.HighConcurrentArchitecture/blob/master/testlinux.jpg?raw=true)
 
 ![image](https://github.com/luoyuzhao/.NETCORE.HighConcurrentArchitecture/blob/master/Screenshot.jpg?raw=true)
  
