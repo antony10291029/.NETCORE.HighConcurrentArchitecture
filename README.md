@@ -1,7 +1,14 @@
 # .NETCORE.HighConcurrentArchitecture
 
 一个基础的.NET CORE 轻量级高并发服务端结构
+
+
+实现了基本的JWTToken全站认证和API访问授权，rabbitMQ连接池，redis和Mysql数据仓储
+
+包括基本的用户，角色，权限控制逻辑
+
 上手简单易用无门槛
+
 
 实际使用请根据系统业务情况合理修改 日志和单元测试根据喜好自行完善
 
@@ -9,17 +16,17 @@
 
 使用第三方软件
 
-https://dev.mysql.com/downloads/
+Database: https://dev.mysql.com/downloads/
 
-https://www.rabbitmq.com/
+messageQueue: https://www.rabbitmq.com/
 
-https://redis.io/
+CacheDb: https://redis.io/
 
-https://github.com/2881099/csredis
+RedisHelper: https://github.com/2881099/csredis
 
-https://github.com/StackExchange/Dapper
+DatabaseORM: https://github.com/StackExchange/Dapper
 
-https://github.com/travist/jsencrypt
+JsEncrypt: https://github.com/travist/jsencrypt
 
 
 
@@ -30,8 +37,6 @@ https://github.com/travist/jsencrypt
 修复linux下部署的一些兼容性问题
 
 修复3.0版本下的身份认证和策略授权变化
-
-实现rabbitMQ连接池
 
 
 ![image](https://github.com/luoyuzhao/.NETCORE.HighConcurrentArchitecture/blob/master/server.jpg?raw=true)
