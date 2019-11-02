@@ -29,6 +29,17 @@ DatabaseORM: https://github.com/StackExchange/Dapper
 JsEncrypt: https://github.com/travist/jsencrypt
 
 
+JWTtoken认证方式：
+
+ajax： headers: { "Authorization": "Bearer " + token },
+
+URL：
+?access_token={token},
+
+cookie:
+Cookies.set('access_token',token);
+
+三者有其一Token认证即可
 
 20191023
 
