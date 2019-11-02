@@ -112,10 +112,11 @@ namespace ZHWB
                     OnMessageReceived = context =>
                     {
                         var accessToken = context.Request.Query["access_token"];
-                        if (!string.IsNullOrEmpty(accessToken))
+                        if (string.IsNullOrEmpty(accessToken))
                         {
-                            context.Token = accessToken;
+                            accessToken=context.Request.Cookies["access_token"];
                         }
+                        context.Token = accessToken;
                         return Task.CompletedTask;
                     }
                 };
